@@ -1,0 +1,15 @@
+FROM microsoft/dotnet:2.1-sdk
+ARG BUILD_CONFIGURATION=Debug
+ENV ASPNETCORE_ENVIRONMENT=Development
+ENV DOTNET_USE_POLLING_FILE_WATCHER=true
+EXPOSE 80
+
+WORKDIR /src
+COPY ["Kubernetes_Microservices/Kubernetes_Microservices.csproj", "Kubernetes_Microservices/"]
+
+RUN dotnet restore "Kubernetes_Microservices/Kubernetes_Microservices.csproj"
+COPY . .
+WORKDIR "/src/Kubernetes_Microservices"
+RUN dotnet build --no-restore "Kubernetes_Microservices.csproj" -c $BUILD_CONFIGURATION
+
+ENTRYPOINT ["dotnet", "run", "--no-build", "--no-launch-profile", "-c", "$BUILD_CONFIGURATION", "--"]
